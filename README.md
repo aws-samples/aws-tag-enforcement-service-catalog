@@ -48,6 +48,7 @@ This sample solution will help you set up tag enforcement in your AWS environmen
 
 This mechanism ensures that any tags added in AWS DynamoDB are added to your AWS Service Catalog TagOption library, and attached to existing portfolios. Additionally, any newly created portfolios will automatically contain all the TagOptions in your TagOption Library.
 
+[![Launch Stack](https://dmhnzl5mp9mj6.cloudfront.net/application-management_awsblog/images/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=tag-enf-demo&templateURL=https://s3.eu-west-3.amazonaws.com/avm-training-032019/tag-scproduct.json)
 
 
 Here is an architecture diagram of the tag enforcement process:
