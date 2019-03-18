@@ -45,14 +45,15 @@ This sample solution will help you set up tag enforcement in your AWS environmen
 This mechanism ensures that any tags added in AWS DynamoDB are added to your AWS Service Catalog TagOption library, and attached to existing portfolios. Additionally, any newly created portfolios will automatically contain all the TagOptions in your TagOption Library.
 
 Here is an architecture diagram of the tag enforcement process:
-[![Architecture Diagram](architecture-diagram.png)]
+![Architecture Diagram](architecture-diagram.png)
 
 
-**Setup:**
+**Setup**
+
 Please click the button below to setup this solution in your environment:
 [![Launch Stack](launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=tag-enf-demo&templateURL=https://s3.eu-west-3.amazonaws.com/avm-training-032019/tag-scproduct.json)
 	
-**Notes:**
+**Notes**
 
 Please note the following considerations while using this sample solution:
 
@@ -66,7 +67,7 @@ If you have an idea on how this solution could be extended, we would love to hea
 
 ### **Conclusion**
 
-In this blog, I have provided a sample solution for ensuring that AWS Service Catalog portfolios created in your environment are tagged automatically using tags from an AWS DynamoDB table. We deployed the solution architecture using a predefined Cloudformation template, ran through a test scenario to ensure the DynamoDB tags were automatically synced with your AWS Service Catalog TagOptions library and portfolios.
+In this post, I have provided a sample solution for ensuring that AWS Service Catalog portfolios created in your environment are tagged automatically using tags from an AWS DynamoDB table. We deployed the solution architecture using a predefined Cloudformation template, ran through a test scenario to ensure the DynamoDB tags were automatically synced with your AWS Service Catalog TagOptions library and portfolios.
 
 Additionally, we went through the possible extensions that you could apply to this solution for your unique compliance use cases. This exercise aims to provide you a head start to your tag compliance strategy, and ensure that all the AWS Service Catalog products launched by your end users will be tagged with a standard set of values defined by your organization.
 
