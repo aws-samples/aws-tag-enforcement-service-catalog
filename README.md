@@ -32,15 +32,15 @@ However, before we dive further, lets revise a few concepts that will serve as p
 
 This sample solution will help you set up tag enforcement in your AWS environment, and perform the following functions:
 
-1. 1) **Sync newly added tags in the DynamoDB table**
-  1. When you add a new tag pair in DynamoDB, it will trigger the **TagSync** Lambda function and create the same tag pair in your TagOption library
-  2. Additionally, the TagOption created in the previous step will be associated with all your existing portfolios
-2. 2) **Sync removal of tags from the DynamoDB table**
-  1. When you remove a tag pair from DynamoDB, it will trigger the **TagSync** Lambda function, disassociate the corresponding TagOption from all the associated portfolios, and remove it from your TagOption library
-3. 3) **Sync updated tags in the DynamoDB table**
-  1. When you update a tag pair in DynamoDB, it will trigger the **TagSync** Lambda function, update the corresponding TagOption your TagOption library, and all the associated portfolios
-4. 4) **Apply all the TagOptions to new portfolios automatically**
-  1. When you create a new AWS Service Catalog portfolio, a Cloudwatch event will trigger the **TagEnforcement** Lambda function, and associate all the TagOptions from your TagOption library to the newly created portfolio
+1. **Sync newly added tags in the DynamoDB table**
+  When you add a new tag pair in DynamoDB, it will trigger the **TagSync** Lambda function and create the same tag pair in your TagOption library
+  Additionally, the TagOption created in the previous step will be associated with all your existing portfolios
+2. **Sync removal of tags from the DynamoDB table**
+  When you remove a tag pair from DynamoDB, it will trigger the **TagSync** Lambda function, disassociate the corresponding TagOption from all the associated portfolios, and remove it from your TagOption library
+3. **Sync updated tags in the DynamoDB table**
+  When you update a tag pair in DynamoDB, it will trigger the **TagSync** Lambda function, update the corresponding TagOption your TagOption library, and all the associated portfolios
+4. **Apply all the TagOptions to new portfolios automatically**
+  When you create a new AWS Service Catalog portfolio, a Cloudwatch event will trigger the **TagEnforcement** Lambda function, and associate all the TagOptions from your TagOption library to the newly created portfolio
 
 This mechanism ensures that any tags added in AWS DynamoDB are added to your AWS Service Catalog TagOption library, and attached to existing portfolios. Additionally, any newly created portfolios will automatically contain all the TagOptions in your TagOption Library.
 
@@ -51,6 +51,7 @@ Here is an architecture diagram of the tag enforcement process:
 **Setup**
 
 Please click the button below to setup this solution in your environment:
+
 [![Launch Stack](launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=tag-enf-demo&templateURL=https://s3.eu-west-3.amazonaws.com/avm-training-032019/tag-scproduct.json)
 	
 **Notes**
