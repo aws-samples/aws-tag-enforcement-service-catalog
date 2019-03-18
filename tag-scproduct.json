@@ -1,0 +1,268 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "AWS CloudFormation to implement tag enforcement of AWS Service Catalog portfolios from a tag source of DynamoDB",
+	"Parameters": {
+
+		"BucketName": {
+			"Default": "tag-enforcement-sample",
+			"Description": "Bucket name containing the lambda code for tag enforcement",
+			"Type": "String"
+		},
+
+		"TagSyncLambdaName": {
+			"Default": "tagSync.zip",
+			"Description": "Enter the filename (S3 Prefix) of the tag sync lambda function (which syncs AWS SC TagOptions with DynamoDB) in S3",
+			"Type": "String"
+		},
+
+		"TagEnforcementLambdaName": {
+			"Default": "tagEnforcement.zip",
+			"Description": "Enter the filename (S3 Prefix) of the tag enforcement lambda function in S3",
+			"Type": "String"
+		},
+
+		"RoleName": {
+			"Default": "SCTagEnforcementLambdaRole",
+			"Description": "Enter the name of the execution role to be created for the tag enforcement and sync lambda functions",
+			"Type": "String"
+		},
+
+		"CloudWatchRuleName": {
+			"Default": "SCTagEnforcementRule",
+			"Description": "Enter the name of CloudWatch rule which will trigger the TagSyncLambda on creation of a new AWS Service Catalog portfolio",
+			"Type": "String"
+		}
+
+	},
+
+	"Resources": {
+
+		"SCTagOptionsTable" : {
+      "Type" : "AWS::DynamoDB::Table",
+      "Properties" : {
+        "AttributeDefinitions" : [
+          {
+            "AttributeName" : "Key",
+            "AttributeType" : "S"
+          },
+          {
+            "AttributeName" : "Value",
+            "AttributeType" : "S"
+          }
+        ],
+        "KeySchema" : [
+          {
+            "AttributeName" : "Key",
+            "KeyType" : "HASH"
+          },
+          {
+            "AttributeName" : "Value",
+            "KeyType" : "RANGE"
+          }
+        ],
+        "ProvisionedThroughput" : {
+          "ReadCapacityUnits" : "1",
+          "WriteCapacityUnits" : "1"
+        },
+				"StreamSpecification": {
+			      "StreamViewType": "NEW_AND_OLD_IMAGES"
+   				}
+			}
+		},
+
+		"CommonLambdaRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"RoleName": {
+					"Ref": "RoleName"
+				},
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [{
+						"Effect": "Allow",
+						"Principal": {
+							"Service": [
+								"lambda.amazonaws.com"
+							]
+						},
+						"Action": [
+							"sts:AssumeRole"
+						]
+					}]
+				},
+				"Policies": [{
+					"PolicyName": {
+						"Fn::Join": [
+							"-", [{
+									"Ref": "RoleName"
+								},
+								"policy"
+							]
+						]
+					},
+					"PolicyDocument": {
+						"Version": "2012-10-17",
+						"Statement": [{
+								"Effect": "Allow",
+								"Action": [
+									"logs:CreateLogGroup",
+									"logs:CreateLogStream",
+									"logs:GetLogEvents",
+									"logs:PutLogEvents"
+								],
+								"Resource": "arn:aws:logs:*:*:*"
+							},
+							{
+								"Effect": "Allow",
+								"Action": [
+									"dynamodb:*"
+								],
+								"Resource": {
+									"Fn::Join": [
+										"", [
+											{"Fn::GetAtt": [
+												"SCTagOptionsTable",
+												"Arn"
+											]},
+											"/*"
+										]
+									]
+
+
+								}
+							},
+							{
+								"Effect": "Allow",
+								"Action": [
+									"servicecatalog:*"
+								],
+								"Resource": "*"
+							},
+							{
+								"Effect": "Allow",
+								"Action": [
+									"s3:*"
+								],
+								"Resource": {
+														  "Fn::Join": [
+														    "", [
+														      "arn:aws:s3:::",
+														      {
+														        "Ref": "BucketName"
+														      }
+														    ]
+														  ]
+														}
+							}
+						]
+					}
+				}]
+			}
+		},
+
+		"TagEnforcementLambda": {
+			"Type": "AWS::Lambda::Function",
+			"Properties": {
+				"Description": "Lambda function to auto-apply all tags from the TagOption library to newly created AWS Service Catalog portfolios",
+				"Code": {
+					"S3Bucket": {"Ref": "BucketName"},
+					"S3Key": {"Ref": "TagEnforcementLambdaName"}
+				},
+				"Role": {
+					"Fn::GetAtt": [
+						"CommonLambdaRole",
+						"Arn"
+					]
+				},
+				"Handler": "tagEnforcement.lambda_handler",
+				"FunctionName": "tagenf-main",
+				"Runtime": "python3.6",
+				"MemorySize": 512,
+				"Timeout": 120,
+				"Environment": {
+					"Variables": {
+						"Bucket": {
+                  "Ref": "BucketName"
+					}
+					}
+				}
+			}
+		},
+
+		"TagSyncLambda": {
+			"Type": "AWS::Lambda::Function",
+			"Properties": {
+				"Description": "Lambda function to sync the DynamoDb tags to AWS Service Catalog tagOption library ",
+				"Code": {
+					"S3Bucket": {"Ref": "BucketName"},
+					"S3Key": {"Ref": "TagSyncLambdaName"}
+				},
+				"Role": {
+					"Fn::GetAtt": [
+						"CommonLambdaRole",
+						"Arn"
+					]
+				},
+				"Handler": "tagSync.lambda_handler",
+				"FunctionName": "tagsync-main",
+				"Runtime": "python3.6",
+				"MemorySize": 512,
+				"Timeout": 120,
+				"Environment": {
+					"Variables": {
+						"Bucket": {
+                  "Ref": "BucketName"
+					}
+					}
+				}
+			}
+		},
+
+		"SCTagEnfCloudWatchRule": {
+			"Type": "AWS::Events::Rule",
+			"DependsOn": "TagEnforcementLambda",
+			"Properties": {
+				"Description": "Rule which attaches tags for the portfolios",
+				"EventPattern": {
+					"source": [
+						"aws.servicecatalog"
+					],
+					"detail-type": [
+						"AWS API Call via CloudTrail"
+					],
+					"detail": {
+						"eventSource": [
+							"servicecatalog.amazonaws.com"
+						],
+						"eventName": [
+							"CreatePortfolio"
+						]
+					}
+				},
+				"Name": {
+					"Ref": "CloudWatchRuleName"
+				},
+				"State": "ENABLED",
+				"Targets": [{
+					"Arn": {
+						"Fn::GetAtt": [
+							"TagEnforcementLambda",
+							"Arn"
+						]
+					},
+					"Id": "RuleforTags"
+				}]
+			}
+		},
+
+		"EventSourceMapping": {
+			  "Type": "AWS::Lambda::EventSourceMapping",
+				"DependsOn": "TagSyncLambda",
+				"Properties": {
+			    "EventSourceArn" : { "Fn::GetAtt" : ["SCTagOptionsTable", "StreamArn"] },
+			    "FunctionName" : { "Fn::GetAtt" : ["TagSyncLambda", "Arn"] },
+			    "StartingPosition" : "LATEST"
+			  }
+			}
+	}
+}
