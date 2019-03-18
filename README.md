@@ -28,10 +28,6 @@ However, before we dive further, lets revise a few concepts that will serve as p
 
 [Amazon DynamoDB ](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html)is a fully managed NoSQL database service that provides fast and predictable performance with seamless scalability.
 
-
-
-
-
 **Solution Overview**
 
 This sample solution will help you set up tag enforcement in your AWS environment, and perform the following functions:
@@ -48,11 +44,13 @@ This sample solution will help you set up tag enforcement in your AWS environmen
 
 This mechanism ensures that any tags added in AWS DynamoDB are added to your AWS Service Catalog TagOption library, and attached to existing portfolios. Additionally, any newly created portfolios will automatically contain all the TagOptions in your TagOption Library.
 
-[![Launch Stack](launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=tag-enf-demo&templateURL=https://s3.eu-west-3.amazonaws.com/avm-training-032019/tag-scproduct.json)
-
-
 Here is an architecture diagram of the tag enforcement process:
-<to be updated>
+[![Architecture Diagram](architecture-diagram.png)]
+
+
+**Setup:**
+Please click the button below to setup this solution in your environment:
+[![Launch Stack](launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=tag-enf-demo&templateURL=https://s3.eu-west-3.amazonaws.com/avm-training-032019/tag-scproduct.json)
 	
 **Notes:**
 
