@@ -4,7 +4,7 @@
 	"Parameters": {
 
 		"BucketName": {
-			"Default": "tag-enforcement-sample",
+			"Default": "apnblog.awspartner.com",
 			"Description": "Bucket name containing the lambda code for tag enforcement",
 			"Type": "String"
 		},
