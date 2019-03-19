@@ -1,6 +1,6 @@
 {
 	"AWSTemplateFormatVersion": "2010-09-09",
-	"Description": "AWS CloudFormation to implement tag enforcement of AWS Service Catalog portfolios from a tag source of DynamoDB",
+	"Description": "AWS CloudFormation to implement tag enforcement of AWS Service Catalog portfolios from a tag source of DynamoDB (fdp-1o82td9bk)",
 	"Parameters": {
 
 		"BucketName": {
