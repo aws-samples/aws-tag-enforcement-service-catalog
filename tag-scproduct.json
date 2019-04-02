@@ -1,6 +1,6 @@
 {
 	"AWSTemplateFormatVersion": "2010-09-09",
-	"Description": "AWS CloudFormation to implement tag enforcement of AWS Service Catalog portfolios from a tag source of DynamoDB (fdp-1o82td9bk)",
+	"Description": "AWS CloudFormation to implement tag enforcement of AWS Service Catalog portfolios from a tag source of DynamoDB (fdp-1pf515if5)",
 	"Parameters": {
 
 		"BucketName": {
@@ -10,13 +10,13 @@
 		},
 
 		"TagSyncLambdaName": {
-			"Default": "tagSync.zip",
+			"Default": "ServiceCatalogTagLibrary/tagSync.zip",
 			"Description": "Enter the filename (S3 Prefix) of the tag sync lambda function (which syncs AWS SC TagOptions with DynamoDB) in S3",
 			"Type": "String"
 		},
 
 		"TagEnforcementLambdaName": {
-			"Default": "tagEnforcement.zip",
+			"Default": "ServiceCatalogTagLibrary/tagEnforcement.zip",
 			"Description": "Enter the filename (S3 Prefix) of the tag enforcement lambda function in S3",
 			"Type": "String"
 		},
