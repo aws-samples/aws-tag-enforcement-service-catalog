@@ -176,7 +176,7 @@
 				},
 				"Handler": "tagEnforcement.lambda_handler",
 				"FunctionName": "tagenf-main",
-				"Runtime": "python3.6",
+				"Runtime": "python3.8",
 				"MemorySize": 512,
 				"Timeout": 120,
 				"Environment": {
@@ -205,7 +205,7 @@
 				},
 				"Handler": "tagSync.lambda_handler",
 				"FunctionName": "tagsync-main",
-				"Runtime": "python3.6",
+				"Runtime": "python3.8",
 				"MemorySize": 512,
 				"Timeout": 120,
 				"Environment": {
